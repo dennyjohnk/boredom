@@ -1,0 +1,12 @@
+import React from "react";
+
+const Contact = props => {
+  return (
+    <div className="container">
+      <h4 className="center">Contact page</h4>
+      <p>this is a test</p>
+    </div>
+  );
+};
+
+export default Contact;
