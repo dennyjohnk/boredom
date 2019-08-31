@@ -1,5 +1,4 @@
 import React from "react";
-import Rainbow from "../components/hoc/Rainbow";
 
 const About = () => {
   return (
@@ -10,4 +9,4 @@ const About = () => {
   );
 };
 
-export default Rainbow(About);
+export default About;
