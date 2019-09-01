@@ -1,7 +1,17 @@
 import React from "react";
-import axios from "axios";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
+
+import Horizondal from "./crop-sizes/Horizondal";
+import Vertical from "./crop-sizes/Vertical";
+import Small from "./crop-sizes/Small";
+import Gallery from "./crop-sizes/Gallery";
+
+import SizeChooser from "./crop-sizes/SizeChooser";
+
+import Image from "../images/image.jpg";
+
+const src = Image;
 
 class Home extends React.Component {
   _crop() {
@@ -9,47 +19,156 @@ class Home extends React.Component {
     console.log(this.refs.cropper.getCroppedCanvas().toDataURL());
   }
   state = {
-    posts: []
+    src,
+    aspectX: null,
+    aspectY: null,
+    cropResult: []
   };
-  componentDidMount() {
-    axios.get("https://jsonplaceholder.typicode.com/posts").then(res => {
-      this.setState({
-        posts: res.data.slice(0, 10)
-      });
+
+  //upload image
+  onImageUpload = e => {
+    e.preventDefault();
+    let files;
+
+    if (e.dataTransfer) {
+      files = e.dataTransfer.files;
+    } else if (e.target) {
+      files = e.target.files;
+    }
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      let image = new window.Image();
+      image.src = reader.result;
+      image.onload = () => {
+        if (image.width !== 1024 && image.height !== 1024) {
+          alert("Please upload a 1024 x 1024 image !");
+        } else {
+          this.setState({ src: reader.result });
+        }
+      };
+    };
+    reader.readAsDataURL(files[0]);
+  };
+
+  //use default image
+  useDefaultImage = () => {
+    this.setState({ src });
+  };
+
+  //crop image on click
+  cropImage = sizeId => {
+    const newCropResults = this.state.cropResult.slice();
+    newCropResults[
+      sizeId - 1
+    ] = this.refs.cropper.getCroppedCanvas().toDataURL();
+
+    if (typeof this.refs.cropper.getCroppedCanvas() === "undefined") {
+      return;
+    }
+
+    this.setState({
+      cropResult: newCropResults
     });
-  }
+  };
+
+  updateCropFrame = sizeId => {
+    console.log(sizeId);
+    switch (sizeId.size) {
+      case 1:
+        this.setState({
+          aspectX: 151,
+          aspectY: 90
+        });
+        break;
+      case 2:
+        this.setState({
+          aspectX: 73,
+          aspectY: 90
+        });
+        break;
+      case 3:
+        this.setState({
+          aspectX: 365,
+          aspectY: 212
+        });
+        break;
+      case 4:
+        this.setState({
+          aspectX: 1,
+          aspectY: 1
+        });
+        break;
+      default:
+        this.setState({
+          aspectX: 1,
+          aspectY: 1
+        });
+    }
+  };
 
   render() {
-    const src =
-      "https://images.pexels.com/photos/34950/pexels-photo.jpg?auto=compress&cs=tinysrgb&dpr=1&w=500";
     return (
       <div className="container">
-        <div style={{ width: "100%" }}>
-          <input type="file" onChange={this.onChange} />
-          <button onClick={this.useDefaultImage}>Use default img</button>
-          <br />
-          <br />
-          <Cropper
-            style={{ height: 400, width: "100%" }}
-            aspectRatio={16 / 9}
-            preview=".img-preview"
-            guides={false}
-            src={this.state.src}
-            ref={cropper => {
-              this.cropper = cropper;
-            }}
+        {/* Cropper UI */}
+        <div className="row">
+          <div className="col s10">
+            <div className="card">
+              <Cropper
+                ref="cropper"
+                src={this.state.src}
+                style={{ height: 400, width: "100%" }}
+                preview=".img-preview"
+                aspectRatio={this.state.aspectX / this.state.aspectY}
+                guides={true}
+                cropBoxResisable={false}
+                crop={this._crop.bind(this)}
+                dragCrop={false}
+                cropBoxResizable={false}
+              />
+            </div>
+          </div>
+          <div className="col s2 padding-10">
+            <button
+              onClick={this.useDefaultImage.bind(this)}
+              className="margin-bottom-20"
+            >
+              Use default img
+            </button>
+
+            <input
+              className="margin-bottom-20"
+              type="file"
+              onChange={this.onImageUpload.bind(this)}
+            />
+            <SizeChooser
+              cropImage={this.cropImage.bind(this)}
+              cropFrame={this.updateCropFrame.bind(this)}
+            />
+          </div>
+        </div>
+
+        <div className="row">
+          <Horizondal
+            cropImage={this.cropImage.bind(this)}
+            cropResult={this.state.cropResult[0]}
+          />
+
+          <Vertical
+            cropImage={this.cropImage.bind(this)}
+            cropResult={this.state.cropResult[1]}
+          />
+
+          <Small
+            cropImage={this.cropImage.bind(this)}
+            cropResult={this.state.cropResult[2]}
+          />
+
+          <Gallery
+            cropImage={this.cropImage.bind(this)}
+            cropResult={this.state.cropResult[3]}
           />
         </div>
-        <h4 className="center">Home page</h4>
-        <Cropper
-          ref="cropper"
-          src={src}
-          style={{ height: 400, width: "100%" }}
-          // Cropper.js options
-          aspectRatio={16 / 10}
-          guides={false}
-          crop={this._crop.bind(this)}
-        />
       </div>
     );
   }
