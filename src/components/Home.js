@@ -43,6 +43,7 @@ class Home extends React.Component {
 
       //check image size
       image.onload = () => {
+        console.log(image);
         if (image.width !== 1024 && image.height !== 1024) {
           alert("Please upload a 1024 x 1024 image !");
         } else {
@@ -140,6 +141,7 @@ class Home extends React.Component {
             <input
               className="margin-bottom-20"
               type="file"
+              accept="image/*"
               onChange={this.onImageUpload.bind(this)}
             />
             <SizeChooser
