@@ -1,4 +1,5 @@
 import React from "react";
+
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 
@@ -10,7 +11,6 @@ import Gallery from "./crop-sizes/Gallery";
 import SizeChooser from "./crop-sizes/SizeChooser";
 
 import Image from "../images/image.jpg";
-
 const src = Image;
 
 class Home extends React.Component {
