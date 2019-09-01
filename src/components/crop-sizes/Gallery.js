@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import previewPlaceholder from "../../images/preview-icon.png";
 
 class Gallery extends Component {
   render() {
@@ -8,7 +9,9 @@ class Gallery extends Component {
           <div className="card-image">
             {this.props.cropResult ? (
               <img src={this.props.cropResult} alt="gallery" />
-            ) : null}
+            ) : (
+              <img src={previewPlaceholder} alt="horizondal" />
+            )}
           </div>
           <div className="card-content">
             <p>Gallery (380 x 380)</p>

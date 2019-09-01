@@ -15,7 +15,7 @@ const src = Image;
 
 class Home extends React.Component {
   _crop() {
-    // image in dataUrl
+    // image in dataUrl. we can use this to show in gallery
     console.log(this.refs.cropper.getCroppedCanvas().toDataURL());
   }
   state = {
@@ -40,6 +40,8 @@ class Home extends React.Component {
     reader.onload = () => {
       let image = new window.Image();
       image.src = reader.result;
+
+      //check image size
       image.onload = () => {
         if (image.width !== 1024 && image.height !== 1024) {
           alert("Please upload a 1024 x 1024 image !");
@@ -73,7 +75,6 @@ class Home extends React.Component {
   };
 
   updateCropFrame = sizeId => {
-    console.log(sizeId);
     switch (sizeId.size) {
       case 1:
         this.setState({
